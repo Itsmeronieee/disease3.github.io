@@ -1,1 +1,90 @@
+<!DOCTYPE html>
 
+<html>
+  <head>
+    <title>ARCornia</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="gesture-detector.js"></script>
+    <script src="gesture-handler.js"></script>    
+  </head>
+
+  <body>
+    <a-scene
+      arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
+      embedded
+      renderer="logarithmicDepthBuffer: true;"
+      vr-mode-ui="enabled: false"
+      gesture-detector
+      id="scene"
+    >
+
+    <figure>
+        <figcaption>ARCornia:</figcaption>
+    </figure>
+    
+      <a-assets>
+        <a-asset-item
+          id="maiz"
+          src="./maiz.glb"
+        >
+        </a-asset-item>
+      </a-assets>
+      
+      <a-marker
+        type="pattern"
+        url="https://itsmeronieee.github.io/diseases3.github.io/marker3/pattern-Corn_Common_Rust.patt"
+      >
+        <a-entity id="entity" look-at="[camera]">
+          <a-entity
+            gltf-model="#maiz" 
+            scale="1 1 1" 
+            position="0 0 0" 
+            class="clickable"
+            gesture-handler
+            animation__rotation="property: rotation; to: 0 360 0; loop: true; dur: 10000"
+          >
+          </a-entity>
+
+          <a-sound src="#song" autoplay="true"></a-sound>
+
+          <!-- Empty entity to hold the dynamically added text -->
+          <a-entity id="textContainer"></a-entity>
+        </a-entity>
+      </a-marker>
+      
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <!-- JavaScript code to dynamically add and remove text -->
+    <script>
+      // Get a reference to the scene and marker elements
+      const scene = document.querySelector("#scene");
+      const marker = document.querySelector("a-marker");
+
+      // Function to create and add the text entity
+      function addTextEntity() {
+        const textContainer = document.querySelector("#textContainer");
+        const textEntity = document.createElement("a-entity");
+        textEntity.setAttribute("position", "0 0.2 -1");
+        textEntity.setAttribute("text", "value: AR Common Rust; align: center; width: 6; color: white");
+        textContainer.appendChild(textEntity);
+      }
+
+      // Event listener to add text when marker is detected
+      marker.addEventListener("markerFound", () => {
+        addTextEntity();
+      });
+
+      // Event listener to remove text when marker is lost (optional)
+      marker.addEventListener("markerLost", () => {
+        const textContainer = document.querySelector("#textContainer");
+        textContainer.innerHTML = ""; // Remove the text entity when marker is lost
+      });
+    </script>
+  </body>
+</html>
